@@ -26,20 +26,30 @@ public class Servidor {
 			saida = new DataOutputStream(socket.getOutputStream());
 
 			// Recebimento do valor inteiro
-			int valor = entrada.readInt();
+			String valor = entrada.readUTF();
 			System.out.println(valor);
 
-			// Processamento do valor
-			String resultado = "";
-			if (valor > 0)
-				resultado = "O valor enviado eh maior que 0";
-			else
-				resultado = "O valor enviado eh menor que 0";
+			String method = valor.split("\"method\": \"")[1].split("\"")[0];
+			String args = valor.split("\"args\": \"")[1].split("\"")[0];
 
+
+			// Processamento do valor	
+			if ("read".equals(method)){
+
+			System.out.println("Leitura");
+			System.out.println("Valor: " + args);
+
+			} else if ("write".equals(method)){
+
+			System.out.println("Escrita");
+			System.out.println("Valor: " + args);
+
+			} else {
+			String resultado = "Opcao invalida";
 			// Envio dos dados (resultado)
 			saida.writeUTF(resultado);
-
 			socket.close();
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();

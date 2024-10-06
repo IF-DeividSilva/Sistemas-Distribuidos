@@ -39,7 +39,7 @@ public class Cliente {
 
             switch (opcao) {
                 case 1:
-                    //leitura();
+                    leitura();
                     break;
                 case 2:
                     //escrita();
@@ -72,6 +72,20 @@ public class Cliente {
             
         } catch(Exception e) {
         	e.printStackTrace();
+        }
+
+    
+        
+    }
+    public void leitura(){
+        try {
+            String read = "{\n \"method\": \"read\",\n \"args\": [\"\"]\n}";
+            saida.writeUTF(read);
+            String resultado = entrada.readUTF();
+            System.out.println(resultado);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     
