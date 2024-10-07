@@ -3,10 +3,8 @@
  * Laboratorio 1 de Sistemas Distribuidos
  */
 
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -42,7 +40,7 @@ public class Cliente {
                     leitura();
                     break;
                 case 2:
-                    //escrita();
+                    escrita();
                     break;
                 case 0:
                     System.out.println("Saindo...");
@@ -55,19 +53,18 @@ public class Cliente {
 
 
             //Recebe do usuario algum valor
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            System.out.println("Digite um numero: ");
-            int valor = Integer.parseInt(br.readLine());
+            //BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            //System.out.println("Digite um numero: ");
+            //int valor = Integer.parseInt(br.readLine());
             
             //O valor eh enviado ao servidor
-            saida.writeInt(valor);
+            //saida.writeInt(valor);
             
             //Recebe-se o resultado do servidor
             String resultado = entrada.readUTF();
             
             //Mostra o resultado na tela
             System.out.println(resultado);
-            
             socket.close();
             
         } catch(Exception e) {
@@ -79,11 +76,29 @@ public class Cliente {
     }
     public void leitura(){
         try {
-            String read = "{\n \"method\": \"read\",\n \"args\": [\"\"]\n}";
+            String read = "{\n \"method\": \"read\",\n \"args\": [\" \"]\n}";
             saida.writeUTF(read);
             String resultado = entrada.readUTF();
             System.out.println(resultado);
             
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    
+    public void escrita(){
+        try {
+            System.out.println("Digite a fortuna: ");
+            Scanner sc = new Scanner (System.in);
+            String newFort = sc.nextLine();
+            
+            String write = "\n \"method\": \"write\",\n \"args\": [\""+newFort+"\"]\n}";
+            saida.writeUTF(write);
+            String resultado = entrada.readUTF();
+            System.out.println(resultado);
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
