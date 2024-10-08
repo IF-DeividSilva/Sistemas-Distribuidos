@@ -5,6 +5,7 @@
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -67,16 +68,17 @@ public class Cliente {
             System.out.println(resultado);
             socket.close();
             
-        } catch(Exception e) {
-        	e.printStackTrace();
+        } catch (EOFException eof) {
+            System.out.println("Fim do arquivo alcançado.");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
     
         
     }
     public void leitura(){
         try {
-            String read = "{\n \"method\": \"read\",\n \"args\": [\" \"]\n}";
+            String read = "{\n \"method\": \"read\",\n \"args\": [\"  \"]\n}";
             saida.writeUTF(read);
             String resultado = entrada.readUTF();
             System.out.println(resultado);
@@ -90,13 +92,14 @@ public class Cliente {
     public void escrita(){
         try {
             System.out.println("Digite a fortuna: ");
-            Scanner sc = new Scanner (System.in);
-            String newFort = sc.nextLine();
-            
-            String write = "\n \"method\": \"write\",\n \"args\": [\""+newFort+"\"]\n}";
-            saida.writeUTF(write);
-            String resultado = entrada.readUTF();
-            System.out.println(resultado);
+            try (Scanner sc = new Scanner(System.in)) {
+                String newFort = sc.nextLine();
+                
+                String write = "\n \"method\": \"write\",\n \"args\": [\""+newFort+"\"]\n}";
+                saida.writeUTF(write);
+                String resultado = entrada.readUTF();
+                System.out.println(resultado);
+            }
 
 
         } catch (Exception e) {

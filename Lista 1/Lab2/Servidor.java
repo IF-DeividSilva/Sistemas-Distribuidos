@@ -122,7 +122,7 @@ public class Servidor {
 					try (FileWriter fw = new FileWriter("fortune-br.txt", true);
 					BufferedWriter bw = new BufferedWriter(fw);
 					PrintWriter pw = new PrintWriter(bw)){
-						pw.println("\n" + newFort + "\n%");
+						pw.println(newFort + "%");
 						resultado = newFort;
 						System.out.println(newFort);
 						return (resultado);
@@ -147,7 +147,7 @@ public class Servidor {
 				saida = new DataOutputStream(socket.getOutputStream());
 				
 				NUM_FORTUNES = fr.countFortunes();
-				HashMap hm = new HashMap<Integer, String>();
+				HashMap<Integer, String> hm = new HashMap<>();
 				fr.parser(hm);
 	
 				// Recebimento do valor inteiro
@@ -157,11 +157,12 @@ public class Servidor {
 				String method = valor.split("\"method\": \"")[1].split("\"")[0];
 	
 				// DANDO BO :
-				String args = "ZEEEEEEEE";
-				//String args = valor.split("\"args\": \"")[1].split("\"")[0];
-				//System.out.println(args);
-				
-				//FileReader fr = new FileReader();
+				String searchString = "\"args\": [\"";
+				int startIndex = valor.indexOf(searchString) + searchString.length();
+				int endIndex = valor.indexOf("\"]", startIndex);
+
+				// Extrair o valor de newFort
+				String args = valor.substring(startIndex, endIndex);
 	
 				// Processamento do valor	
 				if ("read".equals(method)){
@@ -170,6 +171,11 @@ public class Servidor {
 					socket.close();
 					return;
 				} else if ("write".equals(method)){
+					if (!args.endsWith("\n")){
+						String resultado = "false";
+						saida.writeUTF("{\n \" result \":\" "+resultado+ "\" \n}");
+						socket.close();
+					}
 					String resultado = fr.write(hm, args);
 					saida.writeUTF("{\n \" result \":\" "+resultado+ "\" \n}");
 					socket.close();
