@@ -122,7 +122,7 @@ public class Servidor {
 					try (FileWriter fw = new FileWriter("fortune-br.txt", true);
 					BufferedWriter bw = new BufferedWriter(fw);
 					PrintWriter pw = new PrintWriter(bw)){
-						pw.println(newFort + "%");
+						pw.println(newFort + "\n%");
 						resultado = newFort;
 						System.out.println(newFort);
 						return (resultado);
@@ -130,13 +130,12 @@ public class Servidor {
 					}catch (IOException e) {
 						System.out.println("SHOW: Excecao na escrita do arquivo.");	
 					}
-					return "";
+					return "Erro";
 		}
 	}
 		
 		public void iniciar() {
 			System.out.println("Servidor iniciado na porta: " + porta);
-			FileReader fr = new FileReader();
 			try {
 				// Criar porta de recepcao
 				server = new ServerSocket(porta);
@@ -146,50 +145,58 @@ public class Servidor {
 				entrada = new DataInputStream(socket.getInputStream());
 				saida = new DataOutputStream(socket.getOutputStream());
 				
-				NUM_FORTUNES = fr.countFortunes();
-				HashMap<Integer, String> hm = new HashMap<>();
-				fr.parser(hm);
-	
-				// Recebimento do valor inteiro
-				String valor = entrada.readUTF();
-				System.out.println(valor);
-	
-				String method = valor.split("\"method\": \"")[1].split("\"")[0];
-	
-				// DANDO BO :
-				String searchString = "\"args\": [\"";
-				int startIndex = valor.indexOf(searchString) + searchString.length();
-				int endIndex = valor.indexOf("\"]", startIndex);
-
-				// Extrair o valor de newFort
-				String args = valor.substring(startIndex, endIndex);
-	
-				// Processamento do valor	
-				if ("read".equals(method)){
-					String resultado = fr.read(hm);
-					saida.writeUTF("{\n \" result \":\" "+resultado+ "\" \n}");
-					socket.close();
-					return;
-				} else if ("write".equals(method)){
-					if (!args.endsWith("\n")){
-						String resultado = "false";
-						saida.writeUTF("{\n \" result \":\" "+resultado+ "\" \n}");
-						socket.close();
-					}
-					String resultado = fr.write(hm, args);
-					saida.writeUTF("{\n \" result \":\" "+resultado+ "\" \n}");
-					socket.close();
-				} else {
-					String resultado = "Opcao invalida";
-					// Envio dos dados (resultado)
-					saida.writeUTF(resultado);
-					socket.close();
-				}
 				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			
+			FileReader fr = new FileReader();
+			try {
+					NUM_FORTUNES = fr.countFortunes();
+					HashMap<Integer, String> hm = new HashMap<>();
+					fr.parser(hm);
+				
+					// Recebimento do valor inteiro
+					String valor = entrada.readUTF();
+					System.out.println(valor);
+				
+					String method = valor.split("\"method\": \"")[1].split("\"")[0];
+				
+					// DANDO BO :
+					String searchString = "\"args\": [\"";
+					int startIndex = valor.indexOf(searchString) + searchString.length();
+					int endIndex = valor.indexOf("\"]", startIndex);
+			
+					// Extrair o valor de newFort
+					String args = valor.substring(startIndex, endIndex);
+				
+					// Processamento do valor	
+					if ("read".equals(method)){
+						String resultado = fr.read(hm);
+						saida.writeUTF("{\n \" result \":\" "+resultado+ "\" \n}");
+						return;
+					} else if ("write".equals(method)){
+						//if (!args.endsWith("\n")){
+						//	String resultado = "false";
+						//	saida.writeUTF("{\n \" result \":\" "+resultado+ "\" \n}");
+						//	socket.close();
+						//}
+						String resultado = fr.write(hm, args);
+						saida.writeUTF("{\n \" result \":\" "+resultado+ "\" \n}");
+						//	socket.close();
+					} else {
+						String resultado = "Opcao invalida";
+						// Envio dos dados (resultado)
+						saida.writeUTF(resultado);
+						//socket.close();
+					}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}	catch (IOException e) {
+			e.printStackTrace();
 		}
+
+	}
 		public static void main(String[] args) {
 
 		new Servidor().iniciar();
