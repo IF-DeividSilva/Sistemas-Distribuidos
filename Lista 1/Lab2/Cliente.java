@@ -31,7 +31,9 @@
              
              
              BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-             String opcao = "";
+             BufferedReader br1 = new BufferedReader(new InputStreamReader(System.in));
+             int opcao = 0;
+
              do{
                  // Menu
                  System.out.println("Menu:");
@@ -39,22 +41,21 @@
                  System.out.println("2 - Escrita");
                  System.out.println("0 - Sair");
                  System.out.print("Digite sua escolha: ");
-                 opcao = br.readLine();
- 
+                 opcao = Integer.parseInt(br1.readLine());;
              switch (opcao) {
-                 case "1":
+                 case 1:
                      leitura();
                      break;
-                 case "2":
-                     escrita();
+                 case 2:
+                     escrita(br);
                      break;
-                 case "0":
+                 case 0:
                      System.out.println("Saindo...");
                      break;
                  default:
                      System.out.println("Opcao invalida");
              }
-             }   while(!opcao.equals("0"));
+             }   while(opcao != 0);
                  socket.close(); 
              
          } catch (EOFException eof) {
@@ -76,19 +77,15 @@
      }
  
      
-     public void escrita(){
+     public void escrita(BufferedReader br){
          try {
             System.out.println("Digite a fortuna: ");
-        try (Scanner scanner = new Scanner(System.in);) {
-                String newFort = scanner.nextLine();
-            
+       
+                 String newFort = br.readLine();
                  String write = "\n \"method\": \"write\",\n \"args\": [\""+newFort+"\"]\n}";
                  saida.writeUTF(write);
                  String resultado = entrada.readUTF();
                  System.out.println(resultado);
-             }
- 
- 
          } catch (Exception e) {
             System.out.println("SHOW: Excecao na escrita do arquivo.???");
              e.printStackTrace();
