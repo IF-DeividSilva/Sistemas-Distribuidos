@@ -124,7 +124,8 @@ public class Servidor {
 					PrintWriter pw = new PrintWriter(bw)){
 						pw.println(newFort + "\n%");
 						resultado = newFort;
-						System.out.println(newFort);
+					//	System.out.println( "AQQUUUIII");
+
 						return (resultado);
 
 					}catch (IOException e) {
@@ -134,69 +135,65 @@ public class Servidor {
 		}
 	}
 		
-		public void iniciar() {
-			System.out.println("Servidor iniciado na porta: " + porta);
-			try {
-				// Criar porta de recepcao
-				server = new ServerSocket(porta);
-				socket = server.accept();  //Processo fica bloqueado, ah espera de conexoes
-				
-				// Criar os fluxos de entrada e saida
-				entrada = new DataInputStream(socket.getInputStream());
-				saida = new DataOutputStream(socket.getOutputStream());
-				
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-			FileReader fr = new FileReader();
-			try {
-					NUM_FORTUNES = fr.countFortunes();
-					HashMap<Integer, String> hm = new HashMap<>();
-					fr.parser(hm);
-				
-					// Recebimento do valor inteiro
-					String valor = entrada.readUTF();
-					System.out.println(valor);
-				
-					String method = valor.split("\"method\": \"")[1].split("\"")[0];
-				
-					// DANDO BO :
-					String searchString = "\"args\": [\"";
-					int startIndex = valor.indexOf(searchString) + searchString.length();
-					int endIndex = valor.indexOf("\"]", startIndex);
-			
-					// Extrair o valor de newFort
-					String args = valor.substring(startIndex, endIndex);
-				
-					// Processamento do valor	
-					if ("read".equals(method)){
-						String resultado = fr.read(hm);
-						saida.writeUTF("{\n \" result \":\" "+resultado+ "\" \n}");
-						return;
-					} else if ("write".equals(method)){
-						//if (!args.endsWith("\n")){
-						//	String resultado = "false";
-						//	saida.writeUTF("{\n \" result \":\" "+resultado+ "\" \n}");
-						//	socket.close();
-						//}
-						String resultado = fr.write(hm, args);
-						saida.writeUTF("{\n \" result \":\" "+resultado+ "\" \n}");
-						//	socket.close();
-					} else {
-						String resultado = "Opcao invalida";
-						// Envio dos dados (resultado)
-						saida.writeUTF(resultado);
-						//socket.close();
-					}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}	catch (IOException e) {
-			e.printStackTrace();
-		}
+	 public void iniciar() {
+        System.out.println("Servidor iniciado na porta: " + porta);
+        try {
+            // Criar porta de recepção
+            server = new ServerSocket(porta);
+            socket = server.accept();  // Processo fica bloqueado, à espera de conexões
 
-	}
+            // Criar os fluxos de entrada e saída
+            entrada = new DataInputStream(socket.getInputStream());
+            saida = new DataOutputStream(socket.getOutputStream());
+
+            FileReader fr = new FileReader();
+            int NUM_FORTUNES = fr.countFortunes();
+            HashMap<Integer, String> hm = new HashMap<>();
+            fr.parser(hm);
+
+            while (true) {
+                // Recebimento do valor inteiro
+                String valor = entrada.readUTF();
+                System.out.println(valor);
+
+                String method = valor.split("\"method\": \"")[1].split("\"")[0];
+
+                // Extração do valor de newFort
+                String searchString = "\"args\": [\"";
+                int startIndex = valor.indexOf(searchString) + searchString.length();
+                int endIndex = valor.indexOf("\"]", startIndex);
+                String args = valor.substring(startIndex, endIndex);
+
+                // Processamento do valor
+                if ("read".equals(method)) {
+                    String resultado = fr.read(hm);
+                    saida.writeUTF("{\n \"result\": \"" + resultado + "\" \n}");
+                } else if ("write".equals(method)) {
+                    System.out.println("SHOW: Escrevendo...");
+                    String resultado = fr.write(hm, args);
+                    saida.writeUTF("{\n \"result\": \"" + resultado + "\" \n}");
+                } else {
+                    String resultado = "False";
+                    saida.writeUTF("{\n \"result\": \"" + resultado + "\" \n}");
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (socket != null) {
+                    socket.close();
+                }
+                if (server != null) {
+                    server.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 		public static void main(String[] args) {
 
 		new Servidor().iniciar();
