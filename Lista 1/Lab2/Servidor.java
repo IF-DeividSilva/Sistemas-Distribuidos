@@ -55,7 +55,7 @@ public class Servidor {
 
 				}// fim while
 
-				System.out.println(lineCount);
+				//System.out.println(lineCount);
 			} catch (IOException e) {
 				System.out.println("SHOW: Excecao na leitura do arquivo.");
 			}
@@ -87,9 +87,9 @@ public class Servidor {
 					}
 
 					hm.put(lineCount, fortune.toString());
-					System.out.println(fortune.toString());
+					//System.out.println(fortune.toString());
 
-					System.out.println(lineCount);
+					//System.out.println(lineCount);
 				}// fim while
 
 			} catch (IOException e) {
@@ -181,17 +181,6 @@ public class Servidor {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                if (socket != null) {
-                    socket.close();
-                }
-                if (server != null) {
-                    server.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 		public static void main(String[] args) {
