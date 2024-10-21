@@ -10091,3 +10091,7 @@ llllllllla
 %
 ca�ar sapo
 %
+TESTE la ele 
+%
+la ele
+%

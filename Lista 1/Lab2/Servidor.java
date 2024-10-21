@@ -3,6 +3,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -16,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Random;
+
 
 public class Servidor {
 
@@ -55,10 +57,10 @@ public class Servidor {
 
 				}// fim while
 
-				System.out.println(lineCount);
+				//System.out.println(lineCount);
 			} catch (IOException e) {
 				System.out.println("SHOW: Excecao na leitura do arquivo.");
-			}
+			} 
 			return lineCount;
 		}
 
@@ -87,9 +89,9 @@ public class Servidor {
 					}
 
 					hm.put(lineCount, fortune.toString());
-					System.out.println(fortune.toString());
+				//	System.out.println(fortune.toString());
 
-					System.out.println(lineCount);
+					//System.out.println(lineCount);
 				}// fim while
 
 			} catch (IOException e) {
@@ -135,16 +137,11 @@ public class Servidor {
 		}
 	}
 		
-	 public void iniciar() {
+	public void iniciar() {
         System.out.println("Servidor iniciado na porta: " + porta);
         try {
             // Criar porta de recepção
             server = new ServerSocket(porta);
-            socket = server.accept();  // Processo fica bloqueado, à espera de conexões
-
-            // Criar os fluxos de entrada e saída
-            entrada = new DataInputStream(socket.getInputStream());
-            saida = new DataOutputStream(socket.getOutputStream());
 
             FileReader fr = new FileReader();
             int NUM_FORTUNES = fr.countFortunes();
@@ -152,49 +149,54 @@ public class Servidor {
             fr.parser(hm);
 
             while (true) {
-                // Recebimento do valor inteiro
-                String valor = entrada.readUTF();
-                System.out.println(valor);
+                Socket socket = server.accept();  // Processo fica bloqueado, à espera de conexões
+                System.out.println("Cliente conectado: " + socket.getInetAddress());
 
-                String method = valor.split("\"method\": \"")[1].split("\"")[0];
+                try (DataInputStream entrada = new DataInputStream(socket.getInputStream());
+                     DataOutputStream saida = new DataOutputStream(socket.getOutputStream())) {
 
-                // Extração do valor de newFort
-                String searchString = "\"args\": [\"";
-                int startIndex = valor.indexOf(searchString) + searchString.length();
-                int endIndex = valor.indexOf("\"]", startIndex);
-                String args = valor.substring(startIndex, endIndex);
+                    while (socket.isConnected()) {
+                        // Recebimento do valor inteiro
+                        String valor = entrada.readUTF();
+                        System.out.println(valor);
 
-                // Processamento do valor
-                if ("read".equals(method)) {
-                    String resultado = fr.read(hm);
-                    saida.writeUTF("{\n \"result\": \"" + resultado + "\" \n}");
-                } else if ("write".equals(method)) {
-                    System.out.println("SHOW: Escrevendo...");
-                    String resultado = fr.write(hm, args);
-                    saida.writeUTF("{\n \"result\": \"" + resultado + "\" \n}");
-                } else {
-                    String resultado = "False";
-                    saida.writeUTF("{\n \"result\": \"" + resultado + "\" \n}");
+                        String method = valor.split("\"method\": \"")[1].split("\"")[0];
+
+                        // Extração do valor de newFort
+                        String searchString = "\"args\": [\"";
+                        int startIndex = valor.indexOf(searchString) + searchString.length();
+                        int endIndex = valor.indexOf("\"]", startIndex);
+                        String args = valor.substring(startIndex, endIndex);
+
+                        // Processamento do valor
+                        if ("read".equals(method)) {
+                            String resultado = fr.read(hm);
+                            resultado = resultado.substring(1);
+                            saida.writeUTF("{\n \"result\": \"" + resultado + "\" \n}");
+                        } else if ("write".equals(method)) {
+                            System.out.println("SHOW: Escrevendo...");
+                            String resultado = fr.write(hm, args);
+                            resultado = resultado + "\n";
+                            saida.writeUTF("{\n \"result\": \"" + resultado + "\" \n}");
+                        } else {
+                            String resultado = "False";
+                            saida.writeUTF("{\n \"result\": \"" + resultado + "\" \n}");
+                        }
+                    }
+                } catch (IOException e) {
+                    System.out.println("Cliente desconectado: " + socket.getInetAddress());
                 }
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (socket != null) {
-                    socket.close();
-                }
-                if (server != null) {
-                    server.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        }catch (EOFException e) {
+			System.out.println("Fim do arquivo alcançado.");
+		//	break;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
-		public static void main(String[] args) {
+			public static void main(String[] args) {
 
 		new Servidor().iniciar();
 

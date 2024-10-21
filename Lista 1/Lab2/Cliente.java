@@ -54,6 +54,11 @@
                      break;
                  default:
                      System.out.println("Opcao invalida");
+                     String opi = "{\n \"method\": \" \",\n \"args\": [\"  \"]\n}";
+                     saida.writeUTF(opi);
+                     String resultado = entrada.readUTF();
+                     System.out.println(resultado);
+                     break;
              }
              }   while(opcao != 0);
                  socket.close(); 
