@@ -1,0 +1,14 @@
+Relogio lógico de Lamport
+
+-> cada processo tem um clock unico
+-> sempre que enviar uma mensagem que pergunta "o times temp do que enviou é menor?" 
+-> caso seja menor não faz nada
+-> caso seja maior incrementa 1 no que enviou e continua o fluxo de acordo com o times temp de quem recebeu
+-> incrementa 1 e pode mandar novamente.
+
+Preempção-> quando o SO tira recursos de um e direciona para outro.
+
+para garantir que não haja inconsistencia no recurso compartilhado (Banco de dados) deve-se garantir que todas as operações de escrita de uma thread sejam realizadas antes das operações de escrita de outra thread
+
+
+
