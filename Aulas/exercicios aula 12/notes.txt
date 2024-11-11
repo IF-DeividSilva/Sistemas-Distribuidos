@@ -1,0 +1,51 @@
+Algoritimo Distribuido -> capaz de enviar mensagens para pares que se encontram em hosts diferentes
+-> só pode ser se hosts trocarem mensagens
+
+Muitos porem n todos exigem um processo coordenador (Organiza a comunicacao)
+
+
+
+Propriedades
+
+Safety: ao menos um processo pode acessar a regiao critica por vez
+
+Liveness: todo mundo tem acesso ao recurso em algum momento (Garante que não tenha inanição)
+
+Ordering: Define uma ordem mesmo que o recurso ja tenha sido acessado.
+
+Classificacao
+
+Ficha (Token): 
+- Hosts se comunicam com fichas (só uma ficha rodando na rede por vez)
+- Precisa exitir um "anel logico" onde a ficha fica rodando o anel e o host só pode acessar a area compartilhada (região critica)caso tenha a ficha
+- coordenador anuncia uma ficha de tempos em tempos
+- garante a vivacidade
+- Caso o coordenador caia, pode não retornar e o algoritimo pode eleger um novo coordenador
+- ficha pode ser perdida por time out, ou nem chegado ao host por queda do coordenador 
+
+Centralizado
+- Um processo sempre é eleito coordenador
+- Sempre que um processo quiser acessar o recurso deve mandar para o coordenador
+- Caso ele termine ele avisa o coordenador e ele libera para outro
+- mesmo que ele não termine de usar em um determinado tempo o coordenador retira mesmo sem terminar para dar para outro
+- caso ele entre na fila novamente ele vai para o final da fila.  
+- fila n ordena e sim o coordenador caso queira
+- o processo não sabe se o servidor caiu, apenas com time out.
+
+
+Decentralizados
+- Recurso compartilhado para que cada processo possa usar por vez
+- Cada replica elege seu coordenador
+- Quer garantir que todos tenham acesso, porem ainda 1 por vez 
+- Caso o um coordenador cai os clones ainda conversam entre si 
+- não resolve a inanição, apenas garante de forma mais rapida que o recurso compartilhado seja acessado
+- Muitas requisições concorrentes podem reduzir o desempenho
+
+
+
+
+
+
+
+
+
