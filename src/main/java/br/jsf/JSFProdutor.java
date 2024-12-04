@@ -8,7 +8,7 @@ import jakarta.jms.JMSContext;
 import jakarta.jms.Queue; 
 /** 
 * 
-* @author lucio 
+* @author  
 */ 
 @Named(value = "JSFProdutor") 
 @RequestScoped 
