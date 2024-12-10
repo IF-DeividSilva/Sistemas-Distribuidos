@@ -10,9 +10,9 @@
  * 
  * 
  * items 
- * 1) DONE -->  src/PeerLista.java /linha 25
- * 2) DONE --> src/Peer.java /linha 152
- * 3) DONE --> src/Peer.java /linha 193
+ * 1) DONE -->  src/PeerLista.java /linha 31
+ * 2) DONE --> src/Peer.java /linha 173
+ * 3) DONE --> src/Peer.java /linha 206
  * 4) DONE --> src/Peer.java /linha 159
  * 
  */

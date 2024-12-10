@@ -157,33 +157,46 @@ public class Peer implements IMensagem {
 	}
 
 	public PeerLista escolherPeer(List<PeerLista> listaPeers) {
-		// Solicita ao usuário que escolha um peer
-		Scanner scanner = new Scanner(System.in);
-		System.out.print("\n Escolha um peer (digite o número correspondente): ");
-		int escolha = scanner.nextInt();
-		PeerLista peer = listaPeers.get(escolha);
-		return peer;
+		try{
+			// Solicita ao usuário que escolha um peer
+			Scanner scanner = new Scanner(System.in);
+			System.out.print("\n Escolha um peer (digite o número correspondente): ");
+			int escolha = scanner.nextInt();
+			PeerLista peer = listaPeers.get(escolha);
+			return peer;
+		}catch(Exception e){
+			System.out.println("Opção inválida. Tente novamente.");
+			return escolherPeer(listaPeers);
+		}
 	}
 
 	public void exibirPeers(List<PeerLista> listaPeers) {
-		// [INTERFACE COM SWING]
-		// JFrame frame = new JFrame("Peers Ativos");
-		// frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		// frame.setSize(300, 200);
-		// DefaultListModel<String> listModel = new DefaultListModel<>();
-		// int i = 0;
-		// for (PeerLista peer : listaPeers) {
-		// listModel.addElement(i+") "+ peer.getNome());
-		// i = i+1;
-		// }
-		// JList<String> peerList = new JList<>(listModel);
-		// JScrollPane scrollPane = new JScrollPane(peerList);
-		// frame.add(scrollPane, BorderLayout.CENTER);
-		// frame.setVisible(true);
+		// verfica se tem peers ativos
+		if (listaPeers.isEmpty()) { 
+			System.out.println("Nenhum peer ativo no momento."); 
+			return; 
+		}
 
+		// [INTERFACE COM SWING]
+		/* JFrame frame = new JFrame("Peers Ativos");
+		 frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		 frame.setSize(300, 200);
+		 DefaultListModel<String> listModel = new DefaultListModel<>();
+		 int i = 0;
+		 for (PeerLista peer : listaPeers) {
+		 listModel.addElement(i+") "+ peer.getNome());
+		 i = i+1;
+		 }
+		 JList<String> peerList = new JList<>(listModel);
+		 JScrollPane scrollPane = new JScrollPane(peerList);
+		 frame.add(scrollPane, BorderLayout.CENTER);
+		 frame.setVisible(true);
+        */
+		// [INTERFACE MOSTRANDO NO TERMINAL]
 		int i = 0;
 		System.out.println(" ");
 		System.out.println("Peers Ativos");
+		// printa os peers da lista de peers
 		for (PeerLista peer : listaPeers) {
 			System.out.println(i + ") " + peer.getNome());
 			i = i + 1;
@@ -192,9 +205,13 @@ public class Peer implements IMensagem {
 
 	public void desconectar(PeerLista peer, List<PeerLista> listaPeers ) {
 		try {
+			// pega o registro RMI do servidor
 			Registry servidorRegistro = LocateRegistry.getRegistry();
+			// faz unbind do peer 
 			servidorRegistro.unbind(peer.getNome());
+			// remove o objeto do sistema RMI 
 			UnicastRemoteObject.unexportObject(this, false);
+			// remove o peer da lista de peers
 			listaPeers.remove(peer);	
 			System.out.println("Desconectando peer ... ");
 		} catch (Exception e) {
@@ -203,6 +220,7 @@ public class Peer implements IMensagem {
 	}
 
 	public static void main(String[] args) {
+		
 		Peer servidor = new Peer();
 		// servidor.exibirPeers();
 		servidor.iniciar();
