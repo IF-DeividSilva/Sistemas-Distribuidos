@@ -1,6 +1,8 @@
 /**
  * Lab05: Sistema P2P
  * 
+ * Autor: Deivid da Silva e João Vitor Yoshida
+ * Adaptado de Lucio A. Rocha
  * 
  * Referencias: 
  * https://docs.oracle.com/javase/tutorial/essential/io
@@ -10,8 +12,8 @@
  * items 
  * 1) DONE -->  src/PeerLista.java /linha 25
  * 2) DONE --> src/Peer.java /linha 152
- * 3)
- * 4)
+ * 3) DONE --> src/Peer.java /linha 193
+ * 4) DONE --> src/Peer.java /linha 159
  * 
  */
 
